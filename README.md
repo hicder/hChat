@@ -12,9 +12,9 @@ contains a server called hServer.
 ### hClient
 
 This client only works with hServer. hClient and hServer exchanges messages
-serialized by python pickle.
+serialized by Python [pickle](https://docs.python.org/2/library/pickle.html).
 
 ### hServer
 
 This is the special type of server that only communicates with hClient. Like
-hClient, it exchanges message by python [pickle](https://docs.python.org/2/library/pickle.html).
+hClient, it exchanges message by Python [pickle](https://docs.python.org/2/library/pickle.html).
