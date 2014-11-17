@@ -17,6 +17,9 @@ framework.
 - Start the program `python client.py --dhost [host] --irc -u [username]`
 
 ### Framework
+- Clone the repo `git clone https://github.com/hicder/hChat.git`
+- Include the client library: `from ircclient import IRCClient`
+
 ## What's included
 
 This program contains 2 types of clients: IRC client and hClient. It also
