@@ -4,11 +4,19 @@ hChat
 Welcome to hChat, a simple IRC Client written by Duc Hieu Pham from [University
 of Illinois at Urbana-Champaign](http://illinois.edu).
 
+This program can be used as a standalone program, or can be used as a library
+framework.
+
 ## Table of Contents
 - [Quick start](#quick-start)
 - [What's included](#whats-included)
 
 ## Quick start
+### Standalone
+- Clone the repo `git clone https://github.com/hicder/hChat.git`
+- Start the program `python client.py --dhost [host] --irc -u [username]`
+
+### Framework
 ## What's included
 
 This program contains 2 types of clients: IRC client and hClient. It also
@@ -32,3 +40,6 @@ Commands supported:
 - JOIN
 - WHOIS
 - LIST
+- PART
+- QUIT
+- MOTD
