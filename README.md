@@ -18,3 +18,12 @@ serialized by Python [pickle](https://docs.python.org/2/library/pickle.html).
 
 This is the special type of server that only communicates with hClient. Like
 hClient, it exchanges message by Python [pickle](https://docs.python.org/2/library/pickle.html).
+
+### IRC Client
+
+This is used to communicate with IRC Server.
+
+Commands supported:
+- JOIN
+- WHOIS
+- LIST
