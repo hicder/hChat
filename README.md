@@ -39,7 +39,7 @@ hClient, it exchanges message by Python [pickle](https://docs.python.org/2/libra
 
 This is used to communicate with IRC Server.
 
-Commands supported:
+[Commands](http://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands) supported:
 - JOIN
 - WHOIS
 - LIST
