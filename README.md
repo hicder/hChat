@@ -1,8 +1,8 @@
 hChat
 =====
 
-Welcome to hChat, a simple IRC Client written by Duc Hieu Pham from University
-of Illinois at Urbana-Champaign.
+Welcome to hChat, a simple IRC Client written by Duc Hieu Pham from [University
+of Illinois at Urbana-Champaign](http://illinois.edu).
 
 ## What's included
 
