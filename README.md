@@ -6,24 +6,25 @@ of Illinois at Urbana-Champaign](http://illinois.edu).
 
 ## Table of Contents
 - [Quick start](#quick-start)
+- [What's included](#whats-included)
 
 ## Quick start
-### What's included
+## What's included
 
 This program contains 2 types of clients: IRC client and hClient. It also
 contains a server called hServer.
 
-#### hClient
+### hClient
 
 This client only works with hServer. hClient and hServer exchanges messages
 serialized by Python [pickle](https://docs.python.org/2/library/pickle.html).
 
-#### hServer
+### hServer
 
 This is the special type of server that only communicates with hClient. Like
 hClient, it exchanges message by Python [pickle](https://docs.python.org/2/library/pickle.html).
 
-#### IRC Client
+### IRC Client
 
 This is used to communicate with IRC Server.
 
