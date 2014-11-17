@@ -23,7 +23,19 @@ framework.
 ## What's included
 
 This program contains 2 types of clients: IRC client and hClient. It also
-contains a server called hServer.
+contains a server called hServer. The directories will look like this:
+```
+hChat
+|--client
+|  |--__init__.py
+|  |--client.py
+|  |--client_parser.py
+|--model
+|--network
+|--server
+|--.gitignore
+|--README.md
+```
 
 ### hClient
 
