@@ -1,4 +1,4 @@
-import socket, thread
+import socket, _thread
 
 class NetworkWorker:
     """
@@ -12,7 +12,7 @@ class NetworkWorker:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.connect((host, port))
-        thread.start_new_thread(callback, (self.socket,))
+        _thread.start_new_thread(callback, (self.socket,))
 
     def talk(self, msg):
-        self.socket.send(msg)
+        self.socket.send(bytes(msg, 'UTF-8'))

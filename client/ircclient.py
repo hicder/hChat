@@ -18,7 +18,7 @@ class IRCClient:
             line = raw_input()
             c.on_typing(line)           # process input from user.
     """
-    def __init__(self):
+    def __init__(self, text_callback = None):
         """
         Client object. Note that self.channel does NOT save # character.
         """
@@ -29,6 +29,7 @@ class IRCClient:
         self.on_receiving = self.process_line_from_server
         logging.basicConfig(format='%(levelname)s: %(message)s',
                             level=logging.DEBUG, filename='irc.log')
+        self.text_callback = text_callback
 
     def tcp_recv(self, s):
         """
@@ -39,8 +40,9 @@ class IRCClient:
         while True:
             try:
                 data = s.recv(100000)
+                data = data.decode('UTF-8')
             except socket.error:
-                print 'Connection is terminated. Please try again.'
+                print ('Connection is terminated. Please try again.')
             lines = data.split('\r\n')
             for line in lines:
                 self.on_receiving(line)
@@ -95,15 +97,29 @@ class IRCClient:
                     self.process_motd(arg)
                 elif int(cmd) == 371:
                     self.process_info(arg)
+                elif int(cmd) == 353:
+                    self.process_names(arg)
 
             if cmd == 'PRIVMSG':
                 self.process_privmsg(pre, cmd, arg)
             elif cmd == 'PING':
                 self.tk.talk('PONG %s\r\n' % arg)
             elif cmd == 'PART':
-                self.process_part(arg)
+                self.process_part(pre, arg)
             elif cmd == 'JOIN':
                 self.process_join(pre)
+
+    def process_names(self, arg):
+        """
+        Process list of names.
+        """
+        if not arg:
+            return
+        names = arg.split(':')[1]
+        names_list = names.split(' ')
+        if self.text_callback:
+            self.text_callback('## [' + '] ['.join(names_list) + ']')
+        print ('## [' + '] ['.join(names_list) + ']')
 
     def check_destination(self, arg):
         """
@@ -122,42 +138,79 @@ class IRCClient:
         return True
 
     def process_info(self, arg):
+        """
+        Process response for INFO command.
+        """
         msg = ' '.join(arg.split(' ')[1:])
-        print "## Info %s" % msg
+        if self.text_callback:
+            self.text_callback("## Info %s" % msg)
+        print ("## Info %s" % msg)
 
     def process_motd(self, arg):
+        """
+        Process response for MOTD command.
+        """
         if not arg:
             return
         msg = ' '.join(arg.split(' ')[2:])
-        print "## MOTD: %s" % msg
+        if(self.text_callback):
+            self.text_callback("## MOTD: %s" % msg)
+        print ("## MOTD: %s" % msg)
 
     def process_list(self, arg):
+        """
+        Process RESPONSE for list command.
+        """
         msg = ' '.join(arg.split(' ')[1:])
-        print "## chanel %s" % msg
+        if self.text_callback:
+            self.text_callback("## chanel %s" % msg)
+        print ("## chanel %s" % msg)
 
     def process_topic(self, arg):
+        """
+        Process response for TOPIC message.
+        """
         topic = ' '.join(arg.split(' ')[2: ])
         topic = topic[1:]
-        print "## channel topic: %s" % topic
+        if self.text_callback:
+            self.text_callback("## channel topic: %s" % topic)
+        print ("## channel topic: %s" % topic)
 
     def process_time(self, arg):
+        """
+        PROCESS response fro TIME command
+        """
         server = arg.split(' ')[1]
         time = ' '.join(arg.split(' ')[2:])
-        print "## time at %s %s" % (server, time)
+        if self.text_callback:
+            self.text_callback("## time at %s %s" % (server, time))
+        print ("## time at %s %s" % (server, time))
 
-    def process_part(self, arg):
-        nick = arg.split(' ')[1]
-        nick = nick[1:]
-        print "## %s just left" % nick
+    def process_part(self, pre, arg):
+        """
+        Process PART response packet.
+        """
+        nick = pre.split('!')[0]
+        if self.text_callback:
+            self.text_callback("## %s just left" % nick)
+        print ("## %s just left" % nick)
 
     def process_join(self, pre):
+        """
+        Process JOIN response packet.
+        """
         logging.info('processing join')
         nick = pre.split('!')[0]
         if nick == self.username:
             return
-        print "## %s just joined" % nick
+        if self.text_callback:
+            self.text_callback("## %s just joined" % nick)
+        print ("## %s just joined" % nick)
 
     def process_privmsg(self, pre, cmd, arg):
+        """
+        Process PRIVMSG response packet.
+        """
         # print line
         author = pre.split('!')[0]
         msg = ' '.join(arg.strip().split(' ')[1:])[1:]
@@ -167,20 +220,31 @@ class IRCClient:
         t = self.get_time_string_hour_minute()
         if self.is_channel(channel_or_user):
             if channel_or_user == self.channel:
-                print "%s < %s> %s" %(t, author, msg)
+                if self.text_callback:
+                    self.text_callback("%s < %s> %s" %(t, author, msg))
+                print ("%s < %s> %s" %(t, author, msg))
         else:
-            print "%s < %s> %s" %(t, author, msg)
+            if self.text_callback:
+                self.text_callback("%s < %s> %s" %(t, author, msg))
+            print ("%s < %s> %s" %(t, author, msg))
 
     def process_whois(self, cmd, arg):
+        """
+        Process WHOIS response packet.
+        """
         arg = ' '.join(arg.split(' ')[1:])
         logging.info('processing WHOIS with cmd %s', cmd)
         if int(cmd) == 311:
             real_name = arg.split(' ')[4:]
-            print "## Real name: %s" % (' '.join(real_name))[1:]
+            if self.text_callback:
+                self.text_callback("## Real name: %s" % (' '.join(real_name))[1:])
+            print ("## Real name: %s" % (' '.join(real_name))[1:])
         elif int(cmd) == 312:
             server = arg.split(' ')[1]
             server_info = arg.split(' ')[2:]
-            print "## Server: %s [%s]" %(server, ' '.join(server_info))
+            if self.text_callback:
+                self.text_callback("## Server: %s [%s]" %(server, ' '.join(server_info)))
+            print ("## Server: %s [%s]" %(server, ' '.join(server_info)))
 
     def connect_server(self, host, port):
         """
@@ -218,7 +282,7 @@ class IRCClient:
             self.list()
         elif cmd == 'WHOIS':
             if not len(args):
-                print 'You need to specify who to WHOIS'
+                print ('You need to specify who to WHOIS')
                 return
             self.whois(args[1])
         elif cmd == 'TIME':
@@ -229,18 +293,36 @@ class IRCClient:
             self.info()
 
     def info(self):
+        """
+        Send INFO command.
+        """
         self.tk.talk("INFO\r\n")
 
     def motd(self):
+        """
+        Send MOTD command.
+        """
         self.tk.talk("MOTD\r\n")
 
     def get_server_time(self):
+        """
+        Send TIME command.
+        """
         self.tk.talk("TIME\r\n")
 
     def whois(self, nick):
+        """
+        Send WHOIS command.
+
+        Args:
+            nick (string): nick name to find information about.
+        """
         self.tk.talk("WHOIS %s\r\n" % nick)
 
     def list(self):
+        """
+        Send LIST command.
+        """
         cmd = "LIST %s\r\n" % self.channel
         self.tk.talk(cmd)
 
@@ -264,7 +346,9 @@ class IRCClient:
         else:
             t = self.get_time_string_hour_minute()
             msg = "PRIVMSG %s :%s\r\n" % (self.channel, line)
-            print "%s < %s> %s" % (t, self.username, line)
+            if self.text_callback:
+                self.text_callback("%s < %s> %s" % (t, self.username, line))
+            print ("%s < %s> %s" % (t, self.username, line))
             self.tk.talk(msg)
 
     def set_username(self, username):
@@ -297,6 +381,9 @@ class IRCClient:
         self.tk.talk(msg)
 
     def is_number(self, s):
+        """
+        Check if s is a number.
+        """
         try:
             float(s)
             return True
@@ -304,4 +391,7 @@ class IRCClient:
             return False
 
     def get_time_string_hour_minute(self):
+        """
+        Get the current time in hour:minutes.
+        """
         return strftime("%H:%M", localtime())
