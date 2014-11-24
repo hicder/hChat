@@ -155,7 +155,6 @@ class IRCClient:
         msg = ' '.join(arg.split(' ')[2:])
         if(self.text_callback):
             self.text_callback("## MOTD: %s" % msg)
-        print ("## MOTD: %s" % msg)
 
     def process_list(self, arg):
         """
@@ -164,7 +163,6 @@ class IRCClient:
         msg = ' '.join(arg.split(' ')[1:])
         if self.text_callback:
             self.text_callback("## chanel %s" % msg)
-        print ("## chanel %s" % msg)
 
     def process_topic(self, arg):
         """
@@ -174,7 +172,6 @@ class IRCClient:
         topic = topic[1:]
         if self.text_callback:
             self.text_callback("## channel topic: %s" % topic)
-        print ("## channel topic: %s" % topic)
 
     def process_time(self, arg):
         """
@@ -184,7 +181,6 @@ class IRCClient:
         time = ' '.join(arg.split(' ')[2:])
         if self.text_callback:
             self.text_callback("## time at %s %s" % (server, time))
-        print ("## time at %s %s" % (server, time))
 
     def process_part(self, pre, arg):
         """
@@ -193,7 +189,6 @@ class IRCClient:
         nick = pre.split('!')[0]
         if self.text_callback:
             self.text_callback("## %s just left" % nick)
-        print ("## %s just left" % nick)
 
     def process_join(self, pre):
         """
@@ -205,7 +200,6 @@ class IRCClient:
             return
         if self.text_callback:
             self.text_callback("## %s just joined" % nick)
-        print ("## %s just joined" % nick)
 
     def process_privmsg(self, pre, cmd, arg):
         """
@@ -222,11 +216,9 @@ class IRCClient:
             if channel_or_user == self.channel:
                 if self.text_callback:
                     self.text_callback("%s < %s> %s" %(t, author, msg))
-                print ("%s < %s> %s" %(t, author, msg))
         else:
             if self.text_callback:
                 self.text_callback("%s < %s> %s" %(t, author, msg))
-            print ("%s < %s> %s" %(t, author, msg))
 
     def process_whois(self, cmd, arg):
         """
@@ -238,13 +230,11 @@ class IRCClient:
             real_name = arg.split(' ')[4:]
             if self.text_callback:
                 self.text_callback("## Real name: %s" % (' '.join(real_name))[1:])
-            print ("## Real name: %s" % (' '.join(real_name))[1:])
         elif int(cmd) == 312:
             server = arg.split(' ')[1]
             server_info = arg.split(' ')[2:]
             if self.text_callback:
                 self.text_callback("## Server: %s [%s]" %(server, ' '.join(server_info)))
-            print ("## Server: %s [%s]" %(server, ' '.join(server_info)))
 
     def connect_server(self, host, port):
         """
